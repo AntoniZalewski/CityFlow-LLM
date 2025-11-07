@@ -164,19 +164,6 @@ docker compose down
 
 ---
 
-## 10. Co dalej
-
-W kontenerze możesz doinstalować dodatkowe biblioteki LLM/RL:
-
-```bash
-pip install numpy pandas jupyterlab
-# przykładowo pod LLM:
-# pip install transformers accelerate
-```
-
-Chcesz szkielet `agents/`, `configs/`, `runs/` oraz minimalny `run_agent.py` (heurystyka → później LLM)? Daj znać — przygotujemy komplet z krótkim README opisującym pracę z `cityflow.Engine`.
-
----
 ### 🧾 Licencja i pochodzenie
 Niniejsze repozytorium jest oparte na projekcie [CityFlow](https://github.com/cityflow-project/CityFlow),
 który jest dostępny na licencji **Apache License 2.0**.  
