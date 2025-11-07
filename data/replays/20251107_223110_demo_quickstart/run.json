@@ -1,0 +1,15 @@
+{
+  "run_id": "20251107_223110_demo_quickstart",
+  "preset_id": "demo_quickstart",
+  "started_at": "2025-11-07T22:31:10.086447",
+  "steps": 3600,
+  "speed_hz": 10,
+  "seed": 7,
+  "save_replay": true,
+  "status": "paused",
+  "tags": [],
+  "config_path": "/app/examples/config.json",
+  "run_dir": "/app/data/replays/20251107_223110_demo_quickstart",
+  "generated_config_path": "/app/data/replays/20251107_223110_demo_quickstart/config.generated.json",
+  "config_hash": "f4512b8af313f0ce6c4915349ff37df643ddfaba6b2664d833329949cdaa4349"
+}

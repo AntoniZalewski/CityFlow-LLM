@@ -1,65 +1,131 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { fetchPresets, fetchRuns, startRun } from "@/lib/api";
+import type { RunInfo } from "@/lib/types";
+import { formatNumber } from "@/lib/utils";
+
+export default function DashboardPage() {
+  const [presets, setPresets] = useState<string[]>([]);
+  const [runs, setRuns] = useState<RunInfo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  const refresh = async () => {
+    setError(null);
+    try {
+      const [presetItems, runItems] = await Promise.all([
+        fetchPresets(),
+        fetchRuns(),
+      ]);
+      setPresets(presetItems);
+      setRuns(runItems);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load data");
+    }
+  };
+
+  const handleStart = async (presetId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await startRun({ id: presetId });
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to start run");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="space-y-8">
+      <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-slate-50 shadow-xl">
+        <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
+          Presets
+        </p>
+        <div className="mt-4 flex flex-wrap gap-4">
+          {presets.map((preset) => (
+            <div
+              key={preset}
+              className="flex flex-1 min-w-[220px] items-center justify-between rounded-2xl border border-white/10 bg-black/40 px-4 py-3"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              <div>
+                <p className="text-sm text-slate-400">Preset</p>
+                <p className="text-lg font-semibold">{preset}</p>
+              </div>
+              <Button
+                size="sm"
+                disabled={loading}
+                onClick={() => handleStart(preset)}
+              >
+                Run
+              </Button>
+            </div>
+          ))}
+          {presets.length === 0 && (
+            <p className="text-sm text-slate-400">
+              No presets discovered. Add *.yaml files under /experiments.
+            </p>
+          )}
+        </div>
+        {error && (
+          <p className="mt-3 text-sm text-red-400" role="alert">
+            {error}
           </p>
+        )}
+      </section>
+
+      <section className="rounded-3xl border border-white/10 bg-slate-900/40 p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Recent runs
+            </p>
+            <h2 className="text-2xl font-semibold">History</h2>
+          </div>
+          <Button variant="ghost" asChild>
+            <Link href="/replays">Browse replays</Link>
+          </Button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="mt-4 grid gap-3">
+          {runs.slice(0, 5).map((run) => (
+            <div
+              key={run.run_id}
+              className="rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm text-slate-200"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-slate-500">
+                    {run.preset_id}
+                  </p>
+                  <p className="text-lg font-semibold">{run.run_id}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs uppercase tracking-widest text-slate-500">
+                    Vehicles
+                  </p>
+                  <p className="font-semibold">{formatNumber(run.steps)}</p>
+                </div>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-white/80">
+                  {run.status}
+                </span>
+              </div>
+            </div>
+          ))}
+          {runs.length === 0 && (
+            <p className="text-sm text-slate-400">
+              No runs recorded yet. Launch one of the presets above.
+            </p>
+          )}
         </div>
-      </main>
+      </section>
     </div>
   );
 }

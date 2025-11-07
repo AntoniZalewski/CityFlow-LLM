@@ -1,0 +1,12 @@
+{
+  "interval": 1,
+  "seed": 0,
+  "dir": "/app/examples",
+  "roadnetFile": "/app/examples/roadnet.json",
+  "flowFile": "/app/examples/examples/flow.json",
+  "rlTrafficLight": false,
+  "laneChange": false,
+  "saveReplay": true,
+  "roadnetLogFile": "/app/data/replays/20251107_223305_nyc_grid_baseline/roadnet.json",
+  "replayLogFile": "/app/data/replays/20251107_223305_nyc_grid_baseline/replay.txt"
+}

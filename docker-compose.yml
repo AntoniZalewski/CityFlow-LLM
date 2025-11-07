@@ -1,0 +1,54 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      API_BASE: "http://cityflow-api:8000"
+      NEXT_PUBLIC_API_BASE: "http://cityflow-api:8000"
+      NODE_ENV: "development"
+    depends_on:
+      - cityflow-api
+
+  cityflow-api:
+    build:
+      context: .
+      dockerfile: services/cityflow-api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - STATE_POLL_INTERVAL=2.0
+    volumes:
+      - ./experiments:/app/experiments:ro
+      - ./data:/app/data
+    depends_on:
+      cityflow-sim:
+        condition: service_healthy
+
+  cityflow-sim:
+    build:
+      context: .
+      dockerfile: services/cityflow-sim/Dockerfile
+    ports:
+      - "7001:7001"
+    environment:
+      SIM_PORT: "7001"
+      SIM_DEFAULT_SPEED_HZ: "10"
+      SIM_MAX_SPEED_HZ: "60"
+    volumes:
+      - ./examples:/app/examples:ro
+      - ./data:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7001/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s

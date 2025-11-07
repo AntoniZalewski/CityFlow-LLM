@@ -164,6 +164,41 @@ docker compose down
 
 ---
 
+# README_DEV
+
+## Smoke Test Commands
+
+Run from the repository root:
+
+```powershell
+docker compose build --no-cache cityflow-sim cityflow-api
+docker compose up -d
+```
+
+### Health
+
+```powershell
+Invoke-RestMethod 'http://localhost:7001/health'
+Invoke-RestMethod 'http://localhost:8000/scenarios' | ConvertTo-Json -Depth 5
+```
+
+### Run
+
+```powershell
+$run = '{"id":"my_quickstart_001","preset_id":"demo_quickstart"}'
+Invoke-RestMethod -Uri 'http://localhost:8000/run' -Method POST -ContentType 'application/json' -Body $run
+```
+
+### Metrics
+
+```powershell
+$replays = Invoke-RestMethod 'http://localhost:8000/replays'
+$last = $replays.items[-1].run_id
+Invoke-RestMethod "http://localhost:8000/metrics?run_id=$last" | ConvertTo-Json -Depth 5
+```
+
+---
+
 ### 🧾 Licencja i pochodzenie
 Niniejsze repozytorium jest oparte na projekcie [CityFlow](https://github.com/cityflow-project/CityFlow),
 który jest dostępny na licencji **Apache License 2.0**.  

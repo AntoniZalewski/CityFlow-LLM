@@ -1,0 +1,7 @@
+fastapi==0.70.1
+starlette==0.16.0
+uvicorn==0.11.8
+pydantic==1.8.2
+websockets==8.1
+typing-extensions
+dataclasses

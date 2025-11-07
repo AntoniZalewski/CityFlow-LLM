@@ -6,3 +6,5 @@ __pycache__/
 dist/
 build/
 *.whl
+frontend/.next
+frontend/node_modules
