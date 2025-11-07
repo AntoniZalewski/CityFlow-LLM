@@ -1,0 +1,8 @@
+# przyspiesza build, nie pakuj tych rzeczy do kontekstu
+.git
+__pycache__/
+*.pyc
+.venv/
+dist/
+build/
+*.whl
