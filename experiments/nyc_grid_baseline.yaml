@@ -1,0 +1,8 @@
+id: nyc_grid_baseline
+config: examples/config.json
+steps: 3600
+seed: 42
+save_replay: true
+params:
+  interval: 1
+  flowFile: examples/flow.json

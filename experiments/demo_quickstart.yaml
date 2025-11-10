@@ -1,0 +1,7 @@
+id: demo_quickstart
+config: examples/config.json
+steps: 600
+seed: 7
+save_replay: false
+params:
+  interval: 1

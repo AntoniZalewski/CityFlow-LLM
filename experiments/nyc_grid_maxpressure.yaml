@@ -1,0 +1,8 @@
+id: nyc_grid_maxpressure
+config: examples/config.json
+steps: 5400
+seed: 99
+save_replay: true
+params:
+  interval: 0.5
+  flowFile: examples/flow.json
